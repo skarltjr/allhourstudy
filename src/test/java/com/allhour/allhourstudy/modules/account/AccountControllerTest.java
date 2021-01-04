@@ -17,6 +17,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
+import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -85,7 +87,8 @@ class AccountControllerTest {
                 .param("email", "test@email.com"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("account/checked-email"))
-                .andExpect(model().attributeExists("error"));
+                .andExpect(model().attributeExists("error"))
+                .andExpect(unauthenticated());
 
     }
     @Test
@@ -105,7 +108,9 @@ class AccountControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("account/checked-email"))
                 .andExpect(model().attributeExists("nickname"))
-                .andExpect(model().attributeExists("numberOfUser"));
+                .andExpect(model().attributeExists("numberOfUser"))
+                .andExpect(authenticated());
         //@Transactional 추가
+        //todo 템플릿엔진 처리 후 다시확인
     }
 }
