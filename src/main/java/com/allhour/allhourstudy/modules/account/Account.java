@@ -3,6 +3,7 @@ package com.allhour.allhourstudy.modules.account;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -16,6 +17,7 @@ public class Account {
     @GeneratedValue
     private Long id;
 
+    @Email
     @Column(unique = true)
     private String email;
 
@@ -68,5 +70,9 @@ public class Account {
     public void completeSignUp() {
         this.emailVerified = true;
         this.joinedAt = LocalDateTime.now();
+    }
+
+    public boolean canSendConfirmEmail() {
+        return this.emailCheckTokenGeneratedAt.isBefore(LocalDateTime.now().minusHours(1));
     }
 }
