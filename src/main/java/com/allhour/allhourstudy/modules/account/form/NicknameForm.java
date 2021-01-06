@@ -4,24 +4,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 @Data
 @NoArgsConstructor
-public class SignUpForm {
-
+public class NicknameForm {
     @NotBlank
-    @Length(min = 3,max = 20)
+    @Length(min = 3, max = 20)
     @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-z0-9_-]{3,20}$")
     private String nickname;
-
-    @Email
-    @NotBlank
-    private String email;
-
-    @NotBlank
-    @Length(min = 8,max = 40)
-    private String password;
 }

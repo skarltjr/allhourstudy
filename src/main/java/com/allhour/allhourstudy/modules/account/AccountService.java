@@ -1,6 +1,6 @@
 package com.allhour.allhourstudy.modules.account;
 
-import com.allhour.allhourstudy.modules.account.form.SignUpForm;
+import com.allhour.allhourstudy.modules.account.form.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -84,5 +84,35 @@ public class AccountService implements UserDetailsService {
             throw  new IllegalArgumentException(nickname + "에 해당하는 유저가 없습니다");
         }
         return byNickname;
+    }
+
+    public void updateProfile(Account account, Profile profile) {
+        modelMapper.map(profile, account);
+        accountRepository.save(account);
+        //merge
+    }
+
+    public void updatePassword(Account account, PasswordForm passwordForm) {
+        account.setPassword(passwordEncoder.encode(passwordForm.getNewPassword()));
+        accountRepository.save(account);
+    }
+
+    public void updateNotifications(Account account, Notifications notifications) {
+        modelMapper.map(notifications, account);
+        accountRepository.save(account);
+    }
+
+    public void updateNickname(Account account, NicknameForm nicknameForm) {
+        account.setNickname(nicknameForm.getNickname());
+        accountRepository.save(account);
+        login(account);
+    }
+
+    public void sendLoginLink(Account account) {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(account.getEmail());
+        mailMessage.setSubject("All H OUR STUDY 회원 가입 인증");
+        mailMessage.setText("/check-email-token?token=" + account.getEmailCheckToken() + "&email=" + account.getEmail());
+        javaMailSender.send(mailMessage);
     }
 }
