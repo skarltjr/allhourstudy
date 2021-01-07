@@ -1,7 +1,7 @@
 package com.allhour.allhourstudy.modules.account;
 
 import com.allhour.allhourstudy.modules.tag.Tag;
-import com.allhour.allhourstudy.zone.Zone;
+import com.allhour.allhourstudy.modules.zone.Zone;
 import lombok.*;
 
 import javax.persistence.*;

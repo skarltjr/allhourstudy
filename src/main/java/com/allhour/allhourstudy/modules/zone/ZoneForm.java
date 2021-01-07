@@ -1,4 +1,4 @@
-package com.allhour.allhourstudy.zone;
+package com.allhour.allhourstudy.modules.zone;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

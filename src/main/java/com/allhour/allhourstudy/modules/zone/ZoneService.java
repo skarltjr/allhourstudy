@@ -1,4 +1,4 @@
-package com.allhour.allhourstudy.zone;
+package com.allhour.allhourstudy.modules.zone;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;

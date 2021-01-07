@@ -2,7 +2,7 @@ package com.allhour.allhourstudy.modules.account;
 
 import com.allhour.allhourstudy.modules.account.form.*;
 import com.allhour.allhourstudy.modules.tag.Tag;
-import com.allhour.allhourstudy.zone.Zone;
+import com.allhour.allhourstudy.modules.zone.Zone;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
