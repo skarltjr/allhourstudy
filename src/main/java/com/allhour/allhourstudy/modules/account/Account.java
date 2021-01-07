@@ -1,10 +1,14 @@
 package com.allhour.allhourstudy.modules.account;
 
+import com.allhour.allhourstudy.modules.tag.Tag;
+import com.allhour.allhourstudy.zone.Zone;
 import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity @Builder
@@ -57,6 +61,11 @@ public class Account {
     private boolean studyUpdatedByEmail;
 
     private boolean studyUpdatedByWeb = true;
+
+    @ManyToMany
+    private Set<Tag> tags = new HashSet<>();
+    @ManyToMany
+    private Set<Zone> zones = new HashSet<>();
 
     public void generateEmailCheckToken() {
         this.emailCheckToken = UUID.randomUUID().toString();

@@ -1,6 +1,8 @@
 package com.allhour.allhourstudy.modules.account;
 
 import com.allhour.allhourstudy.modules.account.form.*;
+import com.allhour.allhourstudy.modules.tag.Tag;
+import com.allhour.allhourstudy.zone.Zone;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -111,8 +114,39 @@ public class AccountService implements UserDetailsService {
     public void sendLoginLink(Account account) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(account.getEmail());
-        mailMessage.setSubject("All H OUR STUDY 회원 가입 인증");
+        mailMessage.setSubject("All H OUR STUDY 이메일 로그인");
         mailMessage.setText("/check-email-token?token=" + account.getEmailCheckToken() + "&email=" + account.getEmail());
         javaMailSender.send(mailMessage);
+    }
+
+    public Set<Tag> getTags(Account account) {
+        Account byId = accountRepository.findById(account.getId()).orElseThrow();
+        return byId.getTags();
+    }
+
+    public void addTag(Account account, Tag byTitle) {
+        Account newAccount = accountRepository.findById(account.getId()).orElseThrow();
+        newAccount.getTags().add(byTitle);
+        //dirty checking
+    }
+
+    public void removeTag(Account account, Tag tag) {
+        Account byId = accountRepository.findById(account.getId()).orElseThrow();
+        byId.getTags().remove(tag);
+    }
+
+    public Set<Zone> getZones(Account account) {
+        Account account1 = accountRepository.findById(account.getId()).orElseThrow();
+        return account1.getZones();
+    }
+
+    public void addZone(Account account, Zone zone) {
+        Account account1 = accountRepository.findById(account.getId()).orElseThrow();
+        account1.getZones().add(zone);
+    }
+
+    public void removeZone(Account account, Zone zone) {
+        Account account1 = accountRepository.findById(account.getId()).orElseThrow();
+        account1.getZones().remove(zone);
     }
 }

@@ -6,27 +6,40 @@ import com.allhour.allhourstudy.modules.account.form.PasswordForm;
 import com.allhour.allhourstudy.modules.account.form.Profile;
 import com.allhour.allhourstudy.modules.account.validator.NicknameValidator;
 import com.allhour.allhourstudy.modules.account.validator.PasswordFormValidator;
+import com.allhour.allhourstudy.modules.tag.Tag;
+import com.allhour.allhourstudy.modules.tag.TagForm;
+import com.allhour.allhourstudy.modules.tag.TagRepository;
+import com.allhour.allhourstudy.modules.tag.TagService;
+import com.allhour.allhourstudy.zone.Zone;
+import com.allhour.allhourstudy.zone.ZoneForm;
+import com.allhour.allhourstudy.zone.ZoneRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
 public class SettingsController {
 
     private final ModelMapper modelMapper;
+    private final ObjectMapper objectMapper;
     private final AccountService accountService;
     private final NicknameValidator nicknameValidator;
+    private final TagRepository tagRepository;
+    private final ZoneRepository zoneRepository;
 
     @InitBinder("passwordForm")
     public void initBinder(WebDataBinder webDataBinder) {
@@ -115,5 +128,71 @@ public class SettingsController {
         return "redirect:" + "/settings/account";
     }
 
+    @GetMapping("/settings/tags")
+    public String updateTags(@CurrentUser Account account, Model model) throws JsonProcessingException {
+        model.addAttribute("account", account);
+        Set<Tag> tags = accountService.getTags(account);
+        model.addAttribute("tags", tags.stream().map(Tag::getTitle).collect(Collectors.toList()));
+        List<String> allTags = tagRepository.findAll().stream().map(Tag::getTitle).collect(Collectors.toList());
+        model.addAttribute("whitelist", objectMapper.writeValueAsString(allTags));
+        return "settings/tags";
+    }
 
+    @ResponseBody
+    @PostMapping("/settings/tags/add")
+    public ResponseEntity addTag(@CurrentUser Account account, @RequestBody TagForm tagForm) {
+        String tagTitle = tagForm.getTagTitle();
+        Tag byTitle = tagRepository.findByTitle(tagTitle);
+        if (byTitle == null) {
+            Tag tag = new Tag();
+            tag.setTitle(tagTitle);
+            byTitle = tagRepository.save(tag);
+        }
+        accountService.addTag(account, byTitle);
+        return ResponseEntity.ok().build();
+    }
+
+    @ResponseBody
+    @PostMapping("/settings/tags/remove")
+    public ResponseEntity removeTag(@CurrentUser Account account, @RequestBody TagForm tagForm) {
+        Tag tag = tagRepository.findByTitle(tagForm.getTagTitle());
+        if (tag == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        accountService.removeTag(account, tag);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/settings/zones")
+    public String updateZones(@CurrentUser Account account, Model model) throws JsonProcessingException {
+        model.addAttribute("account", account);
+        Set<Zone> zones = accountService.getZones(account);
+        model.addAttribute("zones", zones.stream().map(Zone::toString).collect(Collectors.toList()));
+        List<String> allZones = zoneRepository.findAll().stream().map(Zone::toString).collect(Collectors.toList());
+        model.addAttribute("whitelist", objectMapper.writeValueAsString(allZones));
+        return "settings/zones";
+    }
+
+
+    @PostMapping("/settings/zones/add")
+    @ResponseBody
+    public ResponseEntity addZone(@CurrentUser Account account, @RequestBody ZoneForm zoneForm) {
+        Zone zone = zoneRepository.findByCityAndProvince(zoneForm.getCityName(),zoneForm.getProvinceName());
+        if (zone == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        accountService.addZone(account, zone);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/settings/zones/remove")
+    @ResponseBody
+    public ResponseEntity removeZone(@CurrentUser Account account, @RequestBody ZoneForm zoneForm) {
+        Zone zone = zoneRepository.findByCityAndProvince(zoneForm.getCityName(),zoneForm.getProvinceName());
+        if (zone == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        accountService.removeZone(account, zone);
+        return ResponseEntity.ok().build();
+    }
 }
