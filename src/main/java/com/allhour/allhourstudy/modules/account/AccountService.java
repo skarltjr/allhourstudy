@@ -1,5 +1,8 @@
 package com.allhour.allhourstudy.modules.account;
 
+import com.allhour.allhourstudy.infra.config.AppProperties;
+import com.allhour.allhourstudy.infra.mail.EmailMessage;
+import com.allhour.allhourstudy.infra.mail.EmailService;
 import com.allhour.allhourstudy.modules.account.form.*;
 import com.allhour.allhourstudy.modules.tag.Tag;
 import com.allhour.allhourstudy.modules.zone.Zone;
@@ -8,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,7 +21,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Set;
@@ -31,7 +39,9 @@ public class AccountService implements UserDetailsService {
     private final AccountRepository accountRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
-    private final JavaMailSender javaMailSender;
+    private final EmailService javaMailSender;
+    private final TemplateEngine templateEngine;
+    private final AppProperties appProperties;
 
     public Account processNewAccount(SignUpForm signUpForm) {
         Account account = saveNewAccount(signUpForm);
@@ -48,11 +58,22 @@ public class AccountService implements UserDetailsService {
     }
 
     public void sendSignUpConfirmEmail(Account account) {
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo(account.getEmail());
-        mailMessage.setSubject("All H OUR STUDY 회원 가입 인증");
-        mailMessage.setText("/check-email-token?token=" + account.getEmailCheckToken() + "&email=" + account.getEmail());
-        javaMailSender.send(mailMessage);
+        Context context = new Context();
+        context.setVariable("link", "/check-email-token?token=" + account.getEmailCheckToken() + "&email=" + account.getEmail());
+        context.setVariable("nickname", account.getNickname());
+        context.setVariable("linkName", "이메일 인증하기");
+        context.setVariable("message","All H our Study 서비스 사용을 위해 링크를 클릭해주세요");
+        context.setVariable("host",appProperties.getHost());
+
+        String message = templateEngine.process("mail/simple-link", context);
+
+        EmailMessage build = EmailMessage.builder()
+                .to(account.getEmail())
+                .subject("All H OUR STUDY 회원 가입 인증")
+                .message(message)
+                 .build();
+
+        javaMailSender.sendEmail(build);
     }
 
     public void completeSignUp(Account account) {
@@ -112,11 +133,23 @@ public class AccountService implements UserDetailsService {
     }
 
     public void sendLoginLink(Account account) {
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo(account.getEmail());
-        mailMessage.setSubject("All H OUR STUDY 이메일 로그인");
-        mailMessage.setText("/check-email-token?token=" + account.getEmailCheckToken() + "&email=" + account.getEmail());
-        javaMailSender.send(mailMessage);
+
+        Context context = new Context();
+        context.setVariable("link", "/check-email-token?token=" + account.getEmailCheckToken() + "&email=" + account.getEmail());
+        context.setVariable("nickname", account.getNickname());
+        context.setVariable("linkName", "이메일로 로그인하기");
+        context.setVariable("message","이메일로 로그인하려면 클릭해주세요");
+        context.setVariable("host",appProperties.getHost());
+
+        String message = templateEngine.process("mail/simple-link", context);
+
+        EmailMessage build = EmailMessage.builder()
+                .to(account.getEmail())
+                .subject("All H OUR STUDY - 로그인 링크")
+                .message("/check-email-token?token=" + account.getEmailCheckToken() + "&email=" + account.getEmail())
+                .build();
+
+        javaMailSender.sendEmail(build);
     }
 
     public Set<Tag> getTags(Account account) {

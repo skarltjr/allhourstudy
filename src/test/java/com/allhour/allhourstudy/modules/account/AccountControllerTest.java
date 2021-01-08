@@ -1,5 +1,7 @@
 package com.allhour.allhourstudy.modules.account;
 
+import com.allhour.allhourstudy.infra.mail.EmailMessage;
+import com.allhour.allhourstudy.infra.mail.EmailService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,7 +36,7 @@ class AccountControllerTest {
     @Autowired
     AccountRepository accountRepository;
     @MockBean
-    JavaMailSender javaMailSender;
+    EmailService emailService;
 
     /* @BeforeEach
      public void beforeEach() {
@@ -62,7 +64,7 @@ class AccountControllerTest {
                 .andExpect(view().name("redirect:/"));
 
         assertThat(accountRepository.existsByEmail("kiseok@naver.com"));
-        then(javaMailSender).should().send(any(SimpleMailMessage.class));
+        then(emailService).should().sendEmail(any(EmailMessage.class));
     }
 
     @Test
