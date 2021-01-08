@@ -9,9 +9,6 @@ import com.allhour.allhourstudy.modules.zone.Zone;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,8 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Set;
@@ -39,7 +34,7 @@ public class AccountService implements UserDetailsService {
     private final AccountRepository accountRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
-    private final EmailService javaMailSender;
+    private final EmailService emailService;
     private final TemplateEngine templateEngine;
     private final AppProperties appProperties;
 
@@ -58,7 +53,7 @@ public class AccountService implements UserDetailsService {
     }
 
     public void sendSignUpConfirmEmail(Account account) {
-        Context context = new Context();
+        Context context = new Context(); // model에 내용담아주듯이
         context.setVariable("link", "/check-email-token?token=" + account.getEmailCheckToken() + "&email=" + account.getEmail());
         context.setVariable("nickname", account.getNickname());
         context.setVariable("linkName", "이메일 인증하기");
@@ -73,7 +68,7 @@ public class AccountService implements UserDetailsService {
                 .message(message)
                  .build();
 
-        javaMailSender.sendEmail(build);
+        emailService.sendEmail(build);
     }
 
     public void completeSignUp(Account account) {
@@ -135,7 +130,7 @@ public class AccountService implements UserDetailsService {
     public void sendLoginLink(Account account) {
 
         Context context = new Context();
-        context.setVariable("link", "/check-email-token?token=" + account.getEmailCheckToken() + "&email=" + account.getEmail());
+        context.setVariable("link", "/login-by-email?token=" + account.getEmailCheckToken() + "&email=" + account.getEmail());
         context.setVariable("nickname", account.getNickname());
         context.setVariable("linkName", "이메일로 로그인하기");
         context.setVariable("message","이메일로 로그인하려면 클릭해주세요");
@@ -146,10 +141,10 @@ public class AccountService implements UserDetailsService {
         EmailMessage build = EmailMessage.builder()
                 .to(account.getEmail())
                 .subject("All H OUR STUDY - 로그인 링크")
-                .message("/check-email-token?token=" + account.getEmailCheckToken() + "&email=" + account.getEmail())
+                .message(message)
                 .build();
 
-        javaMailSender.sendEmail(build);
+        emailService.sendEmail(build);
     }
 
     public Set<Tag> getTags(Account account) {
