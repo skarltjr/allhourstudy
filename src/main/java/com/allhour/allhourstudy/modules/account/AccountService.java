@@ -53,6 +53,11 @@ public class AccountService implements UserDetailsService {
     }
 
     public void sendSignUpConfirmEmail(Account account) {
+        /**
+         * 문제 : 이메일을 보내되 로컬에선 진짜로 보내지않고 로그로만 남기고 dev에선 진짜 보내도록 하고싶다
+         * 해결방법 : EmailService interface + @Profile
+         * */
+
         Context context = new Context(); // model에 내용담아주듯이
         context.setVariable("link", "/check-email-token?token=" + account.getEmailCheckToken() + "&email=" + account.getEmail());
         context.setVariable("nickname", account.getNickname());

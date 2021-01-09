@@ -11,5 +11,6 @@ public class ConsoleEmailService implements EmailService{
     @Override
     public void sendEmail(EmailMessage emailMessage) {
         log.info("sent email : " + emailMessage.getMessage());
+        //로컬에선 mailsender로 보낼필요없이 콘솔에 로그만 찍히도록
     }
 }
