@@ -102,7 +102,10 @@ public class StudySettingsController {
 
     @GetMapping("/study/{path}/settings/tags")
     public String studyTags(@CurrentUser Account account, @PathVariable String path, Model model) throws JsonProcessingException {
-        Study study = studyService.getStudyWithTags(account, path);
+        Study study = studyService.getStudyToUpdate( path,account);
+        /** 여기서 만약 getStudyToUpdate -> getStudyWithTags 여기로 리다이렉트할 때
+         * <div th:replace="fragments.html :: study-info"></div> 가 멤버 태그 존을 다 필요로해서
+         * 추가쿼리가 발생 . getStudyToUpdate미리 다 땡겨오면 추가쿼리 x */
         model.addAttribute("account", account);
         model.addAttribute("study", study);
         model.addAttribute("tags", study.getTags().stream().map(Tag::getTitle).collect(Collectors.toList()));
@@ -136,7 +139,7 @@ public class StudySettingsController {
 
     @GetMapping("/study/{path}/settings/zones")
     public String studyZones(@CurrentUser Account account, @PathVariable String path, Model model) throws JsonProcessingException {
-        Study study = studyService.getStudyWithZones(account, path);
+        Study study = studyService.getStudyToUpdate( path,account);
         model.addAttribute("account", account);
         model.addAttribute("study", study);
         model.addAttribute("zones", study.getZones().stream().map(Zone::toString).collect(Collectors.toList()));
