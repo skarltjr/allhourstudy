@@ -11,6 +11,7 @@ import javax.validation.constraints.Pattern;
 @NoArgsConstructor
 public class StudyForm {
 
+    public static final String VALID_PATH_PATTERN = "^[ㄱ-ㅎ가-힣a-z0-9_-]{2,20}$";
 
     @NotBlank
     @Length(min = 2, max = 30)

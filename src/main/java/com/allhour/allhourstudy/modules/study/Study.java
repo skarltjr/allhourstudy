@@ -26,6 +26,8 @@ import java.util.Set;
         @NamedAttributeNode("managers"),
         @NamedAttributeNode("zones")
 })
+@NamedEntityGraph(name = "Study.withManagers",attributeNodes = {
+        @NamedAttributeNode("managers")})
 @Entity @Builder
 @Getter @Setter
 @NoArgsConstructor
@@ -96,5 +98,32 @@ public class Study {
 
     public String getImage() {
         return this.image != null ? image : "/images/default_banner.png";
+    }
+
+    public void publish() {
+        if (!this.closed && !published) {
+            this.published = true;
+            this.publishedDateTime = LocalDateTime.now();
+        }else{
+            throw new RuntimeException("스터디를 공개할 수 없습니다. 이미 공개되었거나 종료된 스터디입니다.");
+        }
+    }
+
+    public void close() {
+        if (!this.closed && this.published) {
+            this.closed = true;
+            this.closedDateTime = LocalDateTime.now();
+        }else{
+            throw new RuntimeException("공개되지 않은 스터디이거나 이미 종료된 스터디는 종료할 수 없습니다.");
+        }
+    }
+
+    public boolean canUpdateRecruit() {
+        return this.published && this.recruitingUpdateDateTime == null
+                || this.published && this.recruitingUpdateDateTime.isBefore(LocalDateTime.now().minusHours(1));
+    }
+
+    public boolean isRemovable() {
+        return !this.published;
     }
 }

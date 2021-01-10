@@ -11,6 +11,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.allhour.allhourstudy.modules.study.form.StudyForm.VALID_PATH_PATTERN;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -67,7 +69,7 @@ public class StudyService {
     }
 
     public Study getStudyWithTags(Account account, String path) {
-        Study study = studyRepository.findWithTagsAndManagersByPath(path);
+        Study study = studyRepository.findStudyWithTagsByPath(path);
         checkIfExistingStudy(path, study);
         checkIfIsManager(study, account);
         return study;
@@ -82,7 +84,7 @@ public class StudyService {
     }
 
     public Study getStudyWithZones(Account account, String path) {
-        Study study = studyRepository.findWithZonesAndManagersByPath(path);
+        Study study = studyRepository.findWithZonesByPath(path);
         checkIfExistingStudy(path, study);
         checkIfIsManager(study, account);
         return study;
@@ -94,5 +96,59 @@ public class StudyService {
 
     public void removeZone(Study study, Zone zone) {
         study.getZones().remove(zone);
+    }
+
+    public void publish(Study study) {
+        study.publish();
+    }
+
+    public void close(Study study) {
+        study.close();
+    }
+
+    public void startRecruit(Study study) {
+        study.setRecruiting(true);
+    }
+
+    public void stopRecruit(Study study) {
+        study.setRecruiting(false);
+    }
+
+    public boolean isValidPath(String newPath) {
+        if (!newPath.matches(VALID_PATH_PATTERN)) {
+            return false;
+        }
+        if (studyRepository.existsByPath(newPath)) {
+            return false;
+        }
+        return true;
+    }
+
+    public void updatePath(Study study, String newPath) {
+        study.setPath(newPath);
+    }
+
+    public boolean isValidTitle(String newTitle) {
+        return newTitle.length() <= 40;
+    }
+
+    public void updateTitle(Study study, String newTitle) {
+        study.setTitle(newTitle);
+
+    }
+
+    public Study getStudyToUpdateStatus(String path,Account account) {
+        Study study = studyRepository.findStudyWithManagersByPath(path);
+        checkIfExistingStudy(path, study);
+        checkIfIsManager(study, account);
+        return study;
+    }
+
+    public void remove(Study study) {
+        if (study.isRemovable()) {
+            studyRepository.delete(study);
+        } else {
+            throw new IllegalArgumentException("스터디를 삭제할 수 없습니다.");
+        }
     }
 }
