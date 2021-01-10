@@ -11,4 +11,13 @@ public class TagService {
 
     private final TagRepository tagRepository;
 
+    public Tag findOrCreate(TagForm tagForm) {
+        Tag tag = tagRepository.findByTitle(tagForm.getTagTitle());
+        if (tag == null) {
+            Tag newTag = new Tag();
+            newTag.setTitle(tagForm.getTagTitle());
+            return tagRepository.save(newTag);
+        }
+        return tag;
+    }
 }

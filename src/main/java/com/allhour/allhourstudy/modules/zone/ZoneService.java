@@ -1,6 +1,7 @@
 package com.allhour.allhourstudy.modules.zone;
 
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ZoneService {
     private final ZoneRepository zoneRepository;
-
+    private final ModelMapper modelMapper;
 
     @PostConstruct
     public void initZoneData() throws IOException {
@@ -32,5 +33,14 @@ public class ZoneService {
                     }).collect(Collectors.toList());
             zoneRepository.saveAll(zoneList);
         }
+    }
+
+    public Zone findOrCreate(ZoneForm zoneForm) {
+        Zone zone = zoneRepository.findByCityAndProvince(zoneForm.getCityName(), zoneForm.getProvinceName());
+        if (zone == null) {
+            Zone newZone = modelMapper.map(zoneForm, Zone.class);
+            return zoneRepository.save(newZone);
+        }
+        return zone;
     }
 }
