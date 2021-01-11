@@ -65,7 +65,7 @@ public class EventController {
     public String eventView(@CurrentUser Account account, @PathVariable String path, @PathVariable Long id,
                             Model model) {
         Study study = studyService.getStudy(path);
-        Event event = eventRepository.findById(id).orElseThrow();
+        Event event = eventRepository.findWithEnrollmentsById(id);
         model.addAttribute("study", study);
         model.addAttribute("account", account);
         model.addAttribute("event", event);
@@ -97,4 +97,7 @@ public class EventController {
         model.addAttribute("oldEvents", oldEvents);
         return "study/events";
     }
+
+    //@GetMapping()
+
 }

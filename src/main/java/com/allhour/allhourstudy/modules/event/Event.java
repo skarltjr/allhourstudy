@@ -14,6 +14,11 @@ import java.util.List;
 @NamedEntityGraph(name = "Event.withEnrollments",attributeNodes = {
         @NamedAttributeNode("enrollments")
 })
+@NamedEntityGraph(name = "Event.withAll",attributeNodes = {
+        @NamedAttributeNode("study"),
+        @NamedAttributeNode("createdBy"),
+        @NamedAttributeNode("enrollments")
+})
 @Entity
 @Builder
 @Getter
