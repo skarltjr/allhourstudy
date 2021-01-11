@@ -10,6 +10,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+
+@NamedEntityGraph(name = "Event.withEnrollments",attributeNodes = {
+        @NamedAttributeNode("enrollments")
+})
 @Entity
 @Builder
 @Getter
@@ -31,7 +35,7 @@ public class Event {
     @Column(nullable = false)
     private String title;
 
-    @Lob
+    @Lob @Basic(fetch = FetchType.EAGER)
     private String description;
 
     @Column(nullable = false)
@@ -94,5 +98,9 @@ public class Event {
         return this.eventType == EventType.CONFIRMATIVE &&
                 enrollment.getEvent().equals(this) &&   //todo check
                 enrollment.isAccepted() && !enrollment.isAttended();
+    }
+
+    public int numberOfRemainSpots() {
+        return this.limitOfEnrollments - (int)this.enrollments.stream().filter(Enrollment::isAccepted).count();
     }
 }

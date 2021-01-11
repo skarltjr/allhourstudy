@@ -78,9 +78,11 @@ public class EventController {
         model.addAttribute("account", account);
         model.addAttribute("study", study);
 
-
-        //todo  사진이미지 길이가 너무길어서 처리가안된다.
         List<Event> events = eventRepository.findByStudyOrderByStartDateTime(study);
+        /** A large object can be stored in several records, that's why you have to use a transaction.
+         * All records are correct or nothing at all.
+         *
+         * EventRepoistory에 트랜잭션을 걸어주지 않아서 psql error -> 용량이 큰 객체를 오토커밋하지못함     */
         List<Event> newEvents = new ArrayList<>();
         List<Event> oldEvents = new ArrayList<>();
         for (Event e : events) {

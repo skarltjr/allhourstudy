@@ -51,7 +51,7 @@ public class Study {
 
     private String shortDescription;
 
-    @Lob
+    @Lob @Basic(fetch = FetchType.EAGER)
     private String fullDescription;
 
     @Lob @Basic(fetch = FetchType.EAGER)
@@ -126,4 +126,6 @@ public class Study {
     public boolean isRemovable() {
         return !this.published;
     }
+
+
 }
