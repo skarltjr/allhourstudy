@@ -1,5 +1,6 @@
 package com.allhour.allhourstudy.modules.event.validator;
 
+import com.allhour.allhourstudy.modules.event.Event;
 import com.allhour.allhourstudy.modules.event.form.EventForm;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -27,6 +28,13 @@ public class EventValidator implements Validator {
         }
         if (!eventForm.getEndDateTime().isBefore(eventForm.getEndEnrollmentDateTime())) {
             errors.rejectValue("endDateTime","wrong.datetime","모임 시작 혹은 종료 시기를 다시 확인해주세요.");
+        }
+    }
+
+
+    public void updateCheck(EventForm form, Event event, Errors errors) {
+        if (event.getLimitOfEnrollments() > form.getLimitOfEnrollments()) {
+            errors.rejectValue("limitOfEnrollments", "wrong.value", "확인된 참가 신청보다 모집 인원 수가 커야합니다.");
         }
     }
 }

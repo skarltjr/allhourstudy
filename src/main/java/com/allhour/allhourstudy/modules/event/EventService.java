@@ -25,4 +25,8 @@ public class EventService {
         event.setCreatedDateTime(LocalDateTime.now());
         return eventRepository.save(event);
     }
+
+    public void updateEvent(EventForm form, Event event) {
+        modelMapper.map(form, event);
+    }
 }

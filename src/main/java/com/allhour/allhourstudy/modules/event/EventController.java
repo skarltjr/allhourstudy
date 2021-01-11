@@ -8,6 +8,7 @@ import com.allhour.allhourstudy.modules.study.Study;
 import com.allhour.allhourstudy.modules.study.StudyRepository;
 import com.allhour.allhourstudy.modules.study.StudyService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -31,6 +32,7 @@ public class EventController {
     private final EventService eventService;
     private final StudyRepository studyRepository;
     private final EventRepository eventRepository;
+    private final ModelMapper modelMapper;
 
     @InitBinder("eventForm")
     public void initBinder(WebDataBinder webDataBinder) {
@@ -98,6 +100,32 @@ public class EventController {
         return "study/events";
     }
 
-    //@GetMapping()
+    @GetMapping("/events/{id}/edit")
+    public String updateEventForm(@CurrentUser Account account, @PathVariable String path, @PathVariable Long id,
+                                  Model model) {
+        Study study = studyService.getStudyToUpdate(path, account);
+        model.addAttribute("account", account);
+        model.addAttribute("study", study);
+        Event event = eventRepository.findWithEnrollmentsById(id);
+        model.addAttribute("event", event);
+        EventForm eventForm = modelMapper.map(event, EventForm.class);
+        model.addAttribute("eventForm", eventForm);
+        return "event/update-form";
+    }
 
+    @PostMapping("/events/{id}/edit")
+    public String updateEvent(@CurrentUser Account account, @PathVariable String path, @PathVariable Long id,
+                              @ModelAttribute @Valid EventForm form, Errors errors, Model model) {
+        Study study = studyService.getStudyToUpdate(path, account);
+        Event event = eventRepository.findWithEnrollmentsById(id);
+        if (errors.hasErrors()) {
+            model.addAttribute("account", account);
+            model.addAttribute("study", study);
+            model.addAttribute("event", event);
+        }
+        eventValidator.updateCheck(form, event, errors);
+        form.setEventType(event.getEventType());
+        eventService.updateEvent(form, event);
+        return "redirect:/study/" + URLEncoder.encode(study.getPath(), StandardCharsets.UTF_8) + "/events/" + event.getId();
+    }
 }
