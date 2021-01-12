@@ -76,4 +76,18 @@ public class EventService {
 
         }
     }
+
+    public void acceptEnrollment(Event event, Enrollment enrollment) {
+        if (event.getEventType() == EventType.CONFIRMATIVE && event.numberOfRemainSpots() >= 1) {
+            enrollment.setAccepted(true);
+        }
+    }
+
+    public void rejectEnrollment(Event event, Enrollment enrollment) {
+        if (event.getEventType() == EventType.CONFIRMATIVE) {
+            enrollment.setAccepted(false);
+        }
+    }
+
+
 }

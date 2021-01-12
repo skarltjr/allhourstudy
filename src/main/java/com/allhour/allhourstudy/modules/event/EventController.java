@@ -30,9 +30,10 @@ public class EventController {
     private final StudyService studyService;
     private final EventValidator eventValidator;
     private final EventService eventService;
-    private final StudyRepository studyRepository;
+    private final EnrollmentRepository enrollmentRepository;
     private final EventRepository eventRepository;
     private final ModelMapper modelMapper;
+    private final EnrollmentService enrollmentService;
 
     @InitBinder("eventForm")
     public void initBinder(WebDataBinder webDataBinder) {
@@ -144,7 +145,7 @@ public class EventController {
         Study study = studyService.getStudyToEnroll(path);
         Event event = eventRepository.findWithAllById(id);
         eventService.enroll(event, account);
-        return "redirect:/study/" + URLEncoder.encode(study.getPath(), StandardCharsets.UTF_8) + "/events/"+event.getId();
+        return "redirect:/study/" + URLEncoder.encode(study.getPath(), StandardCharsets.UTF_8) + "/events/" + event.getId();
     }
 
     @PostMapping("/events/{id}/disEnroll")
@@ -152,8 +153,49 @@ public class EventController {
         Study study = studyService.getStudyToEnroll(path);
         Event event = eventRepository.findWithAllById(id);
         eventService.disEnroll(event, account);
-        return "redirect:/study/" + URLEncoder.encode(study.getPath(), StandardCharsets.UTF_8) + "/events/"+event.getId();
+        return "redirect:/study/" + URLEncoder.encode(study.getPath(), StandardCharsets.UTF_8) + "/events/" + event.getId();
     }
     //todo check 테스트account추가 후 로직 제대로 동작하는지 확인할 것
 
+
+    @GetMapping("/events/{id}/enrollments/{enrollmentId}/accept")
+    public String acceptEnrollment(@CurrentUser Account account, @PathVariable String path, @PathVariable Long id,
+                                   @PathVariable Long enrollmentId) {
+        Study study = studyService.getStudyToUpdate(path, account);
+        Event event = eventRepository.findWithAllById(id);
+        Enrollment enrollment = enrollmentRepository.findWithAllById(enrollmentId);
+        eventService.acceptEnrollment(event, enrollment);
+        return "redirect:/study/" + URLEncoder.encode(study.getPath(), StandardCharsets.UTF_8) + "/events/" + event.getId();
+
+    }
+
+    @GetMapping("/events/{id}/enrollments/{enrollmentId}/reject")
+    public String rejectEnrollment(@CurrentUser Account account, @PathVariable String path, @PathVariable Long id,
+                                   @PathVariable Long enrollmentId) {
+        Study study = studyService.getStudyToUpdate(path, account);
+        Event event = eventRepository.findWithAllById(id);
+        Enrollment enrollment = enrollmentRepository.findWithAllById(enrollmentId);
+        eventService.rejectEnrollment(event, enrollment);
+        return "redirect:/study/" + URLEncoder.encode(study.getPath(), StandardCharsets.UTF_8) + "/events/" + event.getId();
+    }
+
+    @GetMapping("/events/{id}/enrollments/{enrollmentId}/checkin")
+    public String checkIn(@CurrentUser Account account, @PathVariable String path, @PathVariable Long id,
+                          @PathVariable Long enrollmentId) {
+        Study study = studyService.getStudyToUpdate(path, account);
+        Event event = eventRepository.findWithAllById(id);
+        Enrollment enrollment = enrollmentRepository.findWithAllById(enrollmentId);
+        enrollmentService.checkIn(enrollment);
+        return "redirect:/study/" + URLEncoder.encode(study.getPath(), StandardCharsets.UTF_8) + "/events/" + event.getId();
+    }
+
+    @GetMapping("/events/{id}/enrollments/{enrollmentId}/noneCheckIn")
+    public String noneCheckIn(@CurrentUser Account account, @PathVariable String path, @PathVariable Long id,
+                          @PathVariable Long enrollmentId) {
+        Study study = studyService.getStudyToUpdate(path, account);
+        Event event = eventRepository.findWithAllById(id);
+        Enrollment enrollment = enrollmentRepository.findWithAllById(enrollmentId);
+        enrollmentService.noneCheckIn(enrollment);
+        return "redirect:/study/" + URLEncoder.encode(study.getPath(), StandardCharsets.UTF_8) + "/events/" + event.getId();
+    }
 }

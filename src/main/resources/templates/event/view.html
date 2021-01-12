@@ -129,7 +129,7 @@
                             <a th:if="${enroll.accepted && !enroll.attended}" href="#" class="text-decoration-none"
                                th:href="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/enrollments/' + ${enroll.id} + '/checkin'}">체크인</a>
                             <a th:if="${enroll.accepted && enroll.attended}" href="#" class="text-decoration-none"
-                               th:href="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/enrollments/' + ${enroll.id} + '/cancel-checkin'}">체크인 취소</a>
+                               th:href="@{'/study/' + ${study.path} + '/events/' + ${event.id} + '/enrollments/' + ${enroll.id} + '/noneCheckIn'}">체크인 취소</a>
                         </td>
                     </tr>
                     </tbody>
