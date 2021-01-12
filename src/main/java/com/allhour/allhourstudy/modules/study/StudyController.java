@@ -21,6 +21,7 @@ public class StudyController {
 
     private final StudyFormValidator studyFormValidator;
     private final StudyService studyService;
+    private final StudyRepository studyRepository;
 
     @InitBinder("studyForm")
     public void initBinder(WebDataBinder webDataBinder) {
@@ -62,5 +63,17 @@ public class StudyController {
         return "study/members";
     }
 
+    @GetMapping("/study/{path}/join")
+    public String joinStudy(@CurrentUser Account account, @PathVariable String path) {
+        Study study = studyRepository.findWithAllMemberByPath(path);
+        studyService.memberJoin(study, account);
+        return "redirect:/study/" + URLEncoder.encode(study.getPath(), StandardCharsets.UTF_8) + "/members";
+    }
 
+    @GetMapping("/study/{path}/disJoin")
+    public String disJoinStudy(@CurrentUser Account account, @PathVariable String path) {
+        Study study = studyRepository.findWithAllMemberByPath(path);
+        studyService.memberDisjoin(study, account);
+        return "redirect:/study/" + URLEncoder.encode(study.getPath(), StandardCharsets.UTF_8) + "/members";
+    }
 }

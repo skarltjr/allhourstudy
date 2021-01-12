@@ -67,7 +67,7 @@ public class EventController {
     public String eventView(@CurrentUser Account account, @PathVariable String path, @PathVariable Long id,
                             Model model) {
         Study study = studyService.getStudy(path);
-        Event event = eventRepository.findWithEnrollmentsById(id);
+        Event event = eventRepository.findWithAllById(id);
         model.addAttribute("study", study);
         model.addAttribute("account", account);
         model.addAttribute("event", event);
@@ -106,7 +106,7 @@ public class EventController {
         Study study = studyService.getStudyToUpdate(path, account);
         model.addAttribute("account", account);
         model.addAttribute("study", study);
-        Event event = eventRepository.findWithEnrollmentsById(id);
+        Event event = eventRepository.findWithAllById(id);
         model.addAttribute("event", event);
         EventForm eventForm = modelMapper.map(event, EventForm.class);
         model.addAttribute("eventForm", eventForm);
@@ -117,15 +117,43 @@ public class EventController {
     public String updateEvent(@CurrentUser Account account, @PathVariable String path, @PathVariable Long id,
                               @ModelAttribute @Valid EventForm form, Errors errors, Model model) {
         Study study = studyService.getStudyToUpdate(path, account);
-        Event event = eventRepository.findWithEnrollmentsById(id);
+        Event event = eventRepository.findWithAllById(id);
+
+        eventValidator.updateCheck(form, event, errors);
         if (errors.hasErrors()) {
             model.addAttribute("account", account);
             model.addAttribute("study", study);
             model.addAttribute("event", event);
+            return "event/update-form";
         }
-        eventValidator.updateCheck(form, event, errors);
         form.setEventType(event.getEventType());
         eventService.updateEvent(form, event);
         return "redirect:/study/" + URLEncoder.encode(study.getPath(), StandardCharsets.UTF_8) + "/events/" + event.getId();
     }
+
+    @PostMapping("/events/{id}/delete")
+    public String deleteEvent(@CurrentUser Account account, @PathVariable String path, @PathVariable Long id) {
+        Event event = eventRepository.findWithAllById(id);
+        eventService.deleteEvent(event);
+        Study study = studyService.getStudyToUpdate(path, account);
+        return "redirect:/study/" + URLEncoder.encode(study.getPath(), StandardCharsets.UTF_8) + "/events";
+    }
+
+    @PostMapping("/events/{id}/enroll")
+    public String enrollEvent(@CurrentUser Account account, @PathVariable String path, @PathVariable Long id) {
+        Study study = studyService.getStudyToEnroll(path);
+        Event event = eventRepository.findWithAllById(id);
+        eventService.enroll(event, account);
+        return "redirect:/study/" + URLEncoder.encode(study.getPath(), StandardCharsets.UTF_8) + "/events/"+event.getId();
+    }
+
+    @PostMapping("/events/{id}/disEnroll")
+    public String disEnrollEvent(@CurrentUser Account account, @PathVariable String path, @PathVariable Long id) {
+        Study study = studyService.getStudyToEnroll(path);
+        Event event = eventRepository.findWithAllById(id);
+        eventService.disEnroll(event, account);
+        return "redirect:/study/" + URLEncoder.encode(study.getPath(), StandardCharsets.UTF_8) + "/events/"+event.getId();
+    }
+    //todo check 테스트account추가 후 로직 제대로 동작하는지 확인할 것
+
 }

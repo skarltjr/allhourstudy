@@ -199,7 +199,7 @@
                 </span>
             <span sec:authorize="isAuthenticated()"
                   th:if="${!study.closed && study.isMember(#authentication.principal)}" class="btn-group" role="group">
-                    <a class="btn btn-outline-warning" th:href="@{'/study/' + ${study.path} + '/leave'}">
+                    <a class="btn btn-outline-warning" th:href="@{'/study/' + ${study.path} + '/disJoin'}">
                         스터디 탈퇴
                     </a>
                     <a class="btn btn-outline-primary" th:href="@{'/study/' + ${study.path} + '/members'}"

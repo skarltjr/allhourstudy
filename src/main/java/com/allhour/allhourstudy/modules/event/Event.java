@@ -61,6 +61,7 @@ public class Event {
     private EventType eventType;
 
     @OneToMany(mappedBy = "event")
+    @OrderBy("enrolledAt")
     private List<Enrollment> enrollments = new ArrayList<>();
 
     public boolean isEnrollableFor(UserAccount userAccount) {
@@ -69,8 +70,8 @@ public class Event {
     }
 
     public boolean isDisEnrollableFor(UserAccount userAccount) {
-        return !this.endEnrollmentDateTime.isAfter(LocalDateTime.now()) &&
-                !isAlreadyEnrolled(userAccount) && isAttended(userAccount);
+        return this.endEnrollmentDateTime.isAfter(LocalDateTime.now()) &&
+                isAlreadyEnrolled(userAccount) && !isAttended(userAccount);
     }
 
     public boolean isAlreadyEnrolled(UserAccount userAccount) {

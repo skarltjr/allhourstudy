@@ -28,6 +28,10 @@ import java.util.Set;
 })
 @NamedEntityGraph(name = "Study.withManagers",attributeNodes = {
         @NamedAttributeNode("managers")})
+@NamedEntityGraph(name = "Study.withManagersAndMembers",attributeNodes = {
+        @NamedAttributeNode("managers"),
+        @NamedAttributeNode("members")
+})
 @Entity @Builder
 @Getter @Setter
 @NoArgsConstructor
@@ -81,11 +85,8 @@ public class Study {
 
     public boolean isJoinable(UserAccount userAccount) {
         Account account = userAccount.getAccount();
-        if (this.published && this.recruiting &&
-                !this.managers.contains(userAccount) && this.members.contains(account)) {
-            return true;
-        }
-        return false;
+        return this.isPublished() && this.isRecruiting()
+                && !this.members.contains(account) && !this.managers.contains(account);
     }
     public boolean isManager(UserAccount userAccount) {
         Account account = userAccount.getAccount();
@@ -127,5 +128,13 @@ public class Study {
         return !this.published;
     }
 
+    public void memberJoin(Account account) {
+        this.members.add(account);
+        this.memberCount++;
+    }
 
+    public void memberDisjoin(Account account) {
+        this.members.remove(account);
+        this.memberCount--;
+    }
 }
