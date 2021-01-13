@@ -1,12 +1,15 @@
 package com.allhour.allhourstudy.modules.study;
 
 import com.allhour.allhourstudy.modules.account.Account;
+import com.allhour.allhourstudy.modules.study.event.StudyCreatedEvent;
+import com.allhour.allhourstudy.modules.study.event.StudyUpdateEvent;
 import com.allhour.allhourstudy.modules.study.form.StudyDescriptionForm;
 import com.allhour.allhourstudy.modules.study.form.StudyForm;
 import com.allhour.allhourstudy.modules.tag.Tag;
 import com.allhour.allhourstudy.modules.zone.Zone;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +23,7 @@ public class StudyService {
 
     private final StudyRepository studyRepository;
     private final ModelMapper modelMapper;
+    private final ApplicationEventPublisher eventPublisher;
 
     public Study createNewStudy(StudyForm studyForm, Account account) {
         Study study = modelMapper.map(studyForm, Study.class);
@@ -54,6 +58,7 @@ public class StudyService {
 
     public void updateDescription(StudyDescriptionForm form, Study study) {
         modelMapper.map(form, study);
+        eventPublisher.publishEvent(new StudyUpdateEvent(study,"스터디 소개가 수정되었습니다."));
     }
 
     public void useBanner(Study study) {
@@ -100,18 +105,22 @@ public class StudyService {
 
     public void publish(Study study) {
         study.publish();
+        eventPublisher.publishEvent(new StudyCreatedEvent(study));
     }
 
     public void close(Study study) {
         study.close();
+        eventPublisher.publishEvent(new StudyUpdateEvent(study,"스터디가 종료되었습니다."));
     }
 
     public void startRecruit(Study study) {
         study.setRecruiting(true);
+        eventPublisher.publishEvent(new StudyUpdateEvent(study,"스터디 인원 모집을 시작합니다."));
     }
 
     public void stopRecruit(Study study) {
         study.setRecruiting(false);
+        eventPublisher.publishEvent(new StudyUpdateEvent(study,"스터디 인원 모집을 종료합니다."));
     }
 
     public boolean isValidPath(String newPath) {
