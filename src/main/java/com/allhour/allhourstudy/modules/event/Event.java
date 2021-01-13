@@ -96,13 +96,13 @@ public class Event {
 
     public boolean canAccept(Enrollment enrollment) {
         return this.eventType == EventType.CONFIRMATIVE &&
-                enrollment.getEvent().equals(this) &&   //todo check
+                enrollment.getEvent().equals(this) &&
                 !enrollment.isAccepted() && !enrollment.isAttended();
     }
 
     public boolean canReject(Enrollment enrollment ) {
         return this.eventType == EventType.CONFIRMATIVE &&
-                enrollment.getEvent().equals(this) &&   //todo check
+                enrollment.getEvent().equals(this) &&
                 enrollment.isAccepted() && !enrollment.isAttended();
     }
 

@@ -49,17 +49,18 @@ public class StudyEventListener {
     // eventPublisher.publishEvent(new StudyCreatedEvent(study)); - eventPublisher가 publish한 이벤트 처리
     @EventListener
     public void handleStudyCreatedEvent(StudyCreatedEvent studyCreatedEvent) {
-        //생성된 스터디의 태그와 존을 갖고있는 모든 account에게 알림을 보내도록 하자 - study는 detached 인지
+        //생성된 스터디의 태그와 존을 갖고있는 모든 account에게 알림을 보내도록 하자
         Study study = studyRepository.findWithTagsAndZonesById(studyCreatedEvent.getStudy().getId());
         List<Account> accounts = accountRepository.findAccounts(study.getTags(), study.getZones());
         for (Account account : accounts) {
             if (account.isStudyCreatedByEmail()) {
                 // 메일보내기
                 sendMailAboutStudy(study,account,"Check New Study");
+                log.info("log for sending mail : StudyCreatedMail to "+account.getNickname() );
             }
             if (account.isStudyCreatedByWeb()) {
                 //새로운 알림객체를 만들고 저장
-                makeNotificationAboutStudy(study, account, study.getShortDescription(),NotificationType.STUDY_CREATED);
+                makeNotificationAboutStudy(study, account, study.getShortDescription(), NotificationType.STUDY_CREATED);
             }
         }
 
@@ -106,6 +107,7 @@ public class StudyEventListener {
         for (Account member : allMembers) {
             if (member.isStudyUpdatedByEmail()) {
                 sendMailAboutStudy(study,member,"스터디가 업데이트 되었습니다.");
+                log.info("log for sending mail : StudyUpdatedMail to "+member.getNickname() );
             }
             if (member.isStudyUpdatedByWeb()) {
                 makeNotificationAboutStudy(study,member,study.getShortDescription(),NotificationType.STUDY_UPDATED);

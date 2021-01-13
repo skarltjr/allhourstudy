@@ -1,10 +1,14 @@
 package com.allhour.allhourstudy.modules.event;
 
 import com.allhour.allhourstudy.modules.account.Account;
+import com.allhour.allhourstudy.modules.event.event.EnrollmentAcceptEvent;
+import com.allhour.allhourstudy.modules.event.event.EnrollmentRejectEvent;
 import com.allhour.allhourstudy.modules.event.form.EventForm;
 import com.allhour.allhourstudy.modules.study.Study;
+import com.allhour.allhourstudy.modules.study.event.StudyUpdateEvent;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,21 +23,26 @@ public class EventService {
     private final ModelMapper modelMapper;
     private final EventRepository eventRepository;
     private final EnrollmentRepository enrollmentRepository;
+    private final ApplicationEventPublisher eventPublisher;
+
 
     public Event createNewEvent(EventForm eventForm, Study study, Account account) {
         Event event = modelMapper.map(eventForm, Event.class);
         event.setStudy(study);
         event.setCreatedBy(account);
         event.setCreatedDateTime(LocalDateTime.now());
+        eventPublisher.publishEvent(new StudyUpdateEvent(study,event.getTitle()+" 모임이 추가되었습니다."));
         return eventRepository.save(event);
     }
 
     public void updateEvent(EventForm form, Event event) {
         modelMapper.map(form, event);
+        eventPublisher.publishEvent(new StudyUpdateEvent(event.getStudy(),event.getTitle()+"모임이 변경되었습니다."));
     }
 
     public void deleteEvent(Event event) {
         eventRepository.delete(event);
+        eventPublisher.publishEvent(new StudyUpdateEvent(event.getStudy(),event.getTitle()+"모임이 취소되었습니다."));
     }
 
     public void enroll(Event event, Account account) {
@@ -80,14 +89,15 @@ public class EventService {
     public void acceptEnrollment(Event event, Enrollment enrollment) {
         if (event.getEventType() == EventType.CONFIRMATIVE && event.numberOfRemainSpots() >= 1) {
             enrollment.setAccepted(true);
+            eventPublisher.publishEvent(new EnrollmentAcceptEvent(enrollment));
         }
     }
 
     public void rejectEnrollment(Event event, Enrollment enrollment) {
         if (event.getEventType() == EventType.CONFIRMATIVE) {
             enrollment.setAccepted(false);
+            eventPublisher.publishEvent(new EnrollmentRejectEvent(enrollment));
         }
     }
-
 
 }
