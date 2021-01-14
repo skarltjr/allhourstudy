@@ -4,6 +4,7 @@ import com.allhour.allhourstudy.modules.tag.Tag;
 import com.allhour.allhourstudy.modules.zone.Zone;
 import lombok.*;
 
+import javax.inject.Named;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.time.LocalDateTime;
@@ -11,6 +12,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+
+@NamedEntityGraph(name = "Account.withTagsAndZones",attributeNodes = {
+        @NamedAttributeNode("tags"),
+        @NamedAttributeNode("zones")
+})
 @Entity @Builder
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor

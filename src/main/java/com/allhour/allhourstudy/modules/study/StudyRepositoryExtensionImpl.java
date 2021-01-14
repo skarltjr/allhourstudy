@@ -1,5 +1,6 @@
 package com.allhour.allhourstudy.modules.study;
 
+import com.allhour.allhourstudy.modules.account.Account;
 import com.allhour.allhourstudy.modules.tag.QTag;
 import com.allhour.allhourstudy.modules.zone.QZone;
 import com.querydsl.core.QueryResults;
@@ -8,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
+
+import java.util.List;
 
 import static com.allhour.allhourstudy.modules.study.QStudy.study;
 import static com.allhour.allhourstudy.modules.tag.QTag.tag;
@@ -31,5 +34,19 @@ public class StudyRepositoryExtensionImpl extends QuerydslRepositorySupport impl
         JPQLQuery<Study> studyJPQLQuery = getQuerydsl().applyPagination(pageable, query);
         QueryResults<Study> result = studyJPQLQuery.fetchResults();
         return new PageImpl<>(result.getResults(), pageable, result.getTotal());
+    }
+
+    @Override
+    public List<Study> findByAccountWithTagsAndZones(Account current) {
+        JPQLQuery<Study> query = from(study)
+                .where(study.tags.any().in(current.getTags())
+                        .and(study.zones.any().in(current.getZones()))
+                        .and(study.published.isTrue()))
+                .leftJoin(study.tags, tag).fetchJoin()
+                .leftJoin(study.zones, zone).fetchJoin()
+                .orderBy(study.publishedDateTime.desc())
+                .limit(9)
+                .distinct();
+        return query.fetch();
     }
 }

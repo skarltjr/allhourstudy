@@ -1,10 +1,13 @@
 package com.allhour.allhourstudy.modules.study;
 
+import com.allhour.allhourstudy.modules.account.Account;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Transactional(readOnly = true)
 public interface StudyRepository extends JpaRepository<Study,Long>,StudyRepositoryExtension {
@@ -27,5 +30,12 @@ public interface StudyRepository extends JpaRepository<Study,Long>,StudyReposito
 
     @EntityGraph(value = "Study.withTagsAndZones",type = EntityGraph.EntityGraphType.FETCH)
     Study findWithTagsAndZonesById(Long id);
+
+    @EntityGraph(value = "Study.withTagsAndZones",type = EntityGraph.EntityGraphType.FETCH)
+    List<Study> findFirst9ByPublishedOrderByPublishedDateTimeDesc(boolean b);
+
+    List<Study> findFirst5ByManagersContainingAndPublishedOrderByPublishedDateTimeDesc(Account current, boolean b);
+
+    List<Study> findFirst5ByMembersContainingAndPublishedOrderByPublishedDateTimeDesc(Account current, boolean b);
 
 }

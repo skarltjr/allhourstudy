@@ -154,8 +154,6 @@ public class EventController {
         eventService.disEnroll(event, account);
         return "redirect:/study/" + URLEncoder.encode(study.getPath(), StandardCharsets.UTF_8) + "/events/" + event.getId();
     }
-    //todo check 테스트account추가 후 로직 제대로 동작하는지 확인할 것
-
 
     @GetMapping("/events/{id}/enrollments/{enrollmentId}/accept")
     public String acceptEnrollment(@CurrentUser Account account, @PathVariable String path, @PathVariable Long id,

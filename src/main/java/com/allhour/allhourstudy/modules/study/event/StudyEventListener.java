@@ -36,7 +36,6 @@ public class StudyEventListener {
     /**  목적 : 알림을 보내는 것 .  - 비동기적으로 알림을 !보내는것 ! 자체가 목표
      * - 알림을 보내는것과 인터셉터로 알림아이콘이 변경되는 것은 별개 */
 
-    //todo interceptor 알림 아이콘 변경을 위한 인터셉터
 
     private final StudyRepository studyRepository;
     private final AccountRepository accountRepository;
