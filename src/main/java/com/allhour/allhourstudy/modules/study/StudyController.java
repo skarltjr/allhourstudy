@@ -76,4 +76,11 @@ public class StudyController {
         studyService.memberDisjoin(study, account);
         return "redirect:/study/" + URLEncoder.encode(study.getPath(), StandardCharsets.UTF_8) + "/members";
     }
+
+    //테스트용 데이터생성
+   /* @GetMapping("/study/generateTest")
+    public String generateTests(@CurrentUser Account account) {
+        studyService.generate(account);
+        return "redirect:/";
+    }*/
 }

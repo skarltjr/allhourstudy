@@ -6,8 +6,11 @@ import com.allhour.allhourstudy.modules.study.event.StudyUpdateEvent;
 import com.allhour.allhourstudy.modules.study.form.StudyDescriptionForm;
 import com.allhour.allhourstudy.modules.study.form.StudyForm;
 import com.allhour.allhourstudy.modules.tag.Tag;
+import com.allhour.allhourstudy.modules.tag.TagRepository;
 import com.allhour.allhourstudy.modules.zone.Zone;
+import com.allhour.allhourstudy.modules.zone.ZoneRepository;
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.utility.RandomString;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
@@ -24,6 +27,8 @@ public class StudyService {
     private final StudyRepository studyRepository;
     private final ModelMapper modelMapper;
     private final ApplicationEventPublisher eventPublisher;
+    private final TagRepository tagRepository;
+    private final ZoneRepository zoneRepository;
 
     public Study createNewStudy(StudyForm studyForm, Account account) {
         Study study = modelMapper.map(studyForm, Study.class);
@@ -174,4 +179,19 @@ public class StudyService {
         checkIfExistingStudy(path,study);
         return study;
     }
+/*
+    public void generate(Account account) {
+        for (int i = 0; i < 30; i++) {
+            String random = "남기석" + RandomString.make(3);
+            StudyForm form = new StudyForm();
+            form.setPath(random+i);
+            form.setTitle(random);
+            form.setShortDescription("테스트를 합시다");
+            form.setFullDescription("테스트를 합시다  이번테스트 스터디는 " + i);
+            Study study = this.createNewStudy(form, account);
+            study.publish(); // persistence
+            Tag tag = tagRepository.findByTitle("java");
+            study.getTags().add(tag);
+        }
+    }*/
 }
