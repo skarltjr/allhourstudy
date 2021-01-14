@@ -6,6 +6,9 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@NamedEntityGraph(name = "Notification.withAll", attributeNodes = {
+        @NamedAttributeNode("account")
+})
 @Entity @Builder
 @Getter
 @Setter

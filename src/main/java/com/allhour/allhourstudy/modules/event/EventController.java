@@ -5,7 +5,6 @@ import com.allhour.allhourstudy.modules.account.CurrentUser;
 import com.allhour.allhourstudy.modules.event.form.EventForm;
 import com.allhour.allhourstudy.modules.event.validator.EventValidator;
 import com.allhour.allhourstudy.modules.study.Study;
-import com.allhour.allhourstudy.modules.study.StudyRepository;
 import com.allhour.allhourstudy.modules.study.StudyService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
