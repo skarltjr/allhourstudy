@@ -111,8 +111,7 @@ class AccountControllerTest {
                 .andExpect(view().name("account/checked-email"))
                 .andExpect(model().attributeExists("nickname"))
                 .andExpect(model().attributeExists("numberOfUser"))
-                .andExpect(authenticated());
+                .andExpect(authenticated().withUsername("kiseok"));
         //@Transactional 추가
-        //todo 템플릿엔진 처리 후 다시확인
     }
 }

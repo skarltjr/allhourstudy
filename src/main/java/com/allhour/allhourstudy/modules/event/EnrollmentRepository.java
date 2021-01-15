@@ -16,6 +16,6 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
     @EntityGraph(value = "Enrollment.withAll", type = EntityGraph.EntityGraphType.FETCH)
     Enrollment findWithAllById(Long enrollId);
 
-    @EntityGraph(value = "Enrollment.withAll", type = EntityGraph.EntityGraphType.FETCH)
+    @EntityGraph(value = "Enrollment.withAllAndStudy", type = EntityGraph.EntityGraphType.FETCH)
     List<Enrollment> findByAccountAndAcceptedOrderByEnrolledAtDesc(Account current, boolean b);
 }
