@@ -76,6 +76,7 @@ class StudySettingsControllerTest {
                 .andExpect(model().attributeExists("study"))
                 .andExpect(model().attributeExists("studyDescriptionForm"));
     }
+
     @Test
     @DisplayName("스터디소개 수정하기 폼- fail - 권한없음")
     @WithAccount("kiseok")
@@ -125,7 +126,7 @@ class StudySettingsControllerTest {
     @Test
     @DisplayName("스터디 태그 추가하기")
     @WithAccount("kiseok")
-    void addStudyTags()throws Exception {
+    void addStudyTags() throws Exception {
         Account kiseok = accountRepository.findByNickname("kiseok");
         Study study = studyFactory.createStudy("test-path", kiseok);
         TagForm tagForm = new TagForm();
@@ -144,7 +145,7 @@ class StudySettingsControllerTest {
     @Test
     @DisplayName("스터디 태그 삭제하기")
     @WithAccount("kiseok")
-    void removeStudyTags()throws Exception {
+    void removeStudyTags() throws Exception {
         Account kiseok = accountRepository.findByNickname("kiseok");
         Study study = studyFactory.createStudy("test-path", kiseok);
         Tag tag = new Tag();
@@ -165,5 +166,107 @@ class StudySettingsControllerTest {
         assertFalse(study.getTags().contains(java));
     }
 
-    //todo 스터디 열고닫고 팀원 모집하고안하고
+
+    @Test
+    @DisplayName("스터디 공개")
+    @WithAccount("kiseok")
+    void publishStudy()throws Exception {
+        Account kiseok = accountRepository.findByNickname("kiseok");
+        Study study = studyFactory.createStudy("test-path", kiseok);
+        study.setPublished(false);
+
+        assertThat(study.isPublished()).isFalse();
+
+        mockMvc.perform(post("/study/test-path/settings/study/publish")
+                .with(csrf()))
+                .andExpect(status().is3xxRedirection());
+
+        assertThat(study.isPublished()).isTrue();
+    }
+
+    @Test
+    @DisplayName("스터디 종료")
+    @WithAccount("kiseok")
+    void closeStudy()throws Exception {
+        Account kiseok = accountRepository.findByNickname("kiseok");
+        Study study = studyFactory.createStudy("test-path", kiseok);
+        study.setClosed(false);
+        study.setPublished(true);
+        assertThat(study.isClosed()).isFalse();
+
+        mockMvc.perform(post("/study/test-path/settings/study/close")
+                .with(csrf()))
+                .andExpect(status().is3xxRedirection());
+
+        assertThat(study.isClosed()).isTrue();
+    }
+
+
+    @Test
+    @DisplayName("스터디 경로 변경")
+    @WithAccount("kiseok")
+    void changePath()throws Exception {
+        Account kiseok = accountRepository.findByNickname("kiseok");
+        Study study = studyFactory.createStudy("test-path", kiseok);
+
+        mockMvc.perform(post("/study/test-path/settings/study/path")
+                .param("newPath", "new-path")
+                .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attributeExists("message"));
+
+        assertThat(study.getPath()).isEqualTo("new-path");
+    }
+
+    @Test
+    @DisplayName("스터디 경로 변경 - fail")
+    @WithAccount("kiseok")
+    void changePath_fail()throws Exception {
+        Account kiseok = accountRepository.findByNickname("kiseok");
+        Study study = studyFactory.createStudy("test-path", kiseok);
+        studyFactory.createStudy("new-path", kiseok);
+
+        mockMvc.perform(post("/study/test-path/settings/study/path")
+                .param("newPath", "new-path")
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("study/settings/study"))
+                .andExpect(model().attributeExists("studyPathError"));
+
+        assertThat(study.getPath()).isEqualTo("test-path");
+    }
+
+    @Test
+    @DisplayName("스터디 title 변경")
+    @WithAccount("kiseok")
+    void changeTitle()throws Exception {
+        Account kiseok = accountRepository.findByNickname("kiseok");
+        Study study = studyFactory.createStudy("test-path", kiseok);
+
+        mockMvc.perform(post("/study/test-path/settings/study/title")
+                .param("newTitle", "new-title")
+                .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attributeExists("message"));
+
+        assertThat(study.getTitle()).isEqualTo("new-title");
+    }
+
+    @Test
+    @DisplayName("스터디 title 변경 - fail")
+    @WithAccount("kiseok")
+    void changeTitle_fail()throws Exception {
+        Account kiseok = accountRepository.findByNickname("kiseok");
+        Study study = studyFactory.createStudy("test-path", kiseok);
+        study.setTitle("original");
+
+        mockMvc.perform(post("/study/test-path/settings/study/title")
+                .param("newTitle", "40자가 넘어가면 에러입니다. 40자가 넘어가면 에러입니다. 40자가 넘어가면 에러입니다. 40자가 넘어가면 에러입니다.40자가 넘어가면 에러입니다. 40자가 넘어가면 에러입니다.")
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("study/settings/study"))
+                .andExpect(model().attributeExists("studyTitleError"));
+
+        assertThat(study.getTitle()).isEqualTo("original");
+    }
 }

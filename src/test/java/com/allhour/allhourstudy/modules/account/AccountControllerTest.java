@@ -2,6 +2,7 @@ package com.allhour.allhourstudy.modules.account;
 
 import com.allhour.allhourstudy.infra.mail.EmailMessage;
 import com.allhour.allhourstudy.infra.mail.EmailService;
+import com.allhour.allhourstudy.modules.study.StudyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

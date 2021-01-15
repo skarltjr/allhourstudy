@@ -14,4 +14,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     @EntityGraph(value = "Event.withAll",type = EntityGraph.EntityGraphType.LOAD)
     Event findWithAllById(Long id);
+
+    Event findByTitle(String s);
 }

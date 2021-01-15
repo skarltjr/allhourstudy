@@ -141,4 +141,13 @@ public class Study {
         this.members.remove(account);
         this.memberCount--;
     }
+
+    public void addManager(Account account) {
+        this.getManagers().add(account);
+    }
+
+    public void addMember(Account account) {
+        this.getMembers().add(account);
+        this.memberCount++;
+    }
 }
