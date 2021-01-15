@@ -47,6 +47,7 @@ public class StudyController {
         return "redirect:/study/" + URLEncoder.encode(newStudy.getPath(), StandardCharsets.UTF_8);
     }
 
+
     @GetMapping("/study/{path}")
     public String studyView(@CurrentUser Account account, @PathVariable String path, Model model) {
         Study study = studyService.getStudy(path);

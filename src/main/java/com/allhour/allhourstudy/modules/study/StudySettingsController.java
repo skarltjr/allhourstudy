@@ -63,7 +63,7 @@ public class StudySettingsController {
         }
         studyService.updateDescription(form, study);
         attributes.addFlashAttribute("message", "소개를 수정했습니다");
-        return "redirect:/study/" + URLEncoder.encode(study.getPath()) + "/settings/description";
+        return "redirect:/study/" + URLEncoder.encode(study.getPath(), StandardCharsets.UTF_8) + "/settings/description";
     }
 
     @GetMapping("/study/{path}/settings/banner")
