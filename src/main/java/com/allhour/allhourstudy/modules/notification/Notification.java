@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(of = "id")
 public class Notification {
 
-    @Id
+    @Id @Column(name = "notification_id")
     @GeneratedValue
     private Long id;
 

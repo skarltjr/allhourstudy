@@ -27,7 +27,7 @@ import java.util.List;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class Event {
-    @Id
+    @Id @Column(name = "event_id")
     @GeneratedValue
     private Long id;
 

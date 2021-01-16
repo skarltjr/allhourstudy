@@ -22,6 +22,7 @@ import java.util.Set;
         @NamedAttributeNode("managers"),
         @NamedAttributeNode("tags")
 })
+
 @NamedEntityGraph(name = "Study.withZonesAndManagers",attributeNodes = {
         @NamedAttributeNode("managers"),
         @NamedAttributeNode("zones")
@@ -42,7 +43,7 @@ import java.util.Set;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class Study {
-    @Id
+    @Id @Column(name = "study_id")
     @GeneratedValue
     private Long id;
 

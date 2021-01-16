@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 @Transactional(readOnly = true)
-public interface AccountRepositoryExtension {
+public interface AccountRepositoryExtension{
 
     List<Account> findAccounts(Set<Tag> tags, Set<Zone> zones);
 }

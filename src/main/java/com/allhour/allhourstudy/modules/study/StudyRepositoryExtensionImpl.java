@@ -40,7 +40,7 @@ public class StudyRepositoryExtensionImpl extends QuerydslRepositorySupport impl
     public List<Study> findByAccountWithTagsAndZones(Account current) {
         JPQLQuery<Study> query = from(study)
                 .where(study.tags.any().in(current.getTags())
-                        .and(study.zones.any().in(current.getZones()))
+                        .or(study.zones.any().in(current.getZones()))
                         .and(study.published.isTrue()))
                 .leftJoin(study.tags, tag).fetchJoin()
                 .leftJoin(study.zones, zone).fetchJoin()

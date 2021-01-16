@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class Enrollment {
-    @Id
+    @Id @Column(name = "enrollment_id")
     @GeneratedValue
     private Long id;
 

@@ -18,7 +18,7 @@ import javax.persistence.Id;
 public class Zone {
 
 
-    @Id
+    @Id @Column(name = "zone_id")
     @GeneratedValue
     private Long id;
 

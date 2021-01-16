@@ -23,7 +23,7 @@ import java.util.UUID;
 @EqualsAndHashCode(of = "id")
 public class Account {
 
-    @Id
+    @Id @Column(name = "account_id")
     @GeneratedValue
     private Long id;
 

@@ -15,7 +15,7 @@ import javax.persistence.Id;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class Tag {
-    @Id
+    @Id @Column(name = "tag_id")
     @GeneratedValue
     private Long id;
 
