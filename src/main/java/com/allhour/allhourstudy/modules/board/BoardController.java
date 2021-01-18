@@ -34,8 +34,8 @@ public class BoardController {
             size = 10,sort = "createdDateTime",direction = Sort.Direction.DESC)Pageable pageable) {
         // 프론트단에서 인증정보가 있으면 글작성하기버튼 on 없으면 off
         model.addAttribute("account", account);
-        //글 10개씩  todo 여기부터 다시확인
         Page<Board> boardPage = boardRepository.findLists(pageable);
+        //가져올 때 댓글 개수까지 달 수 있도록 양방향으로 댓글 - 게시글
         model.addAttribute("boardLists", boardPage);
         return "boards";
     }
@@ -73,6 +73,7 @@ public class BoardController {
         return "redirect:/boards/" + board.getId();
     }
 
-    //삭제
+    //todo 단건 수정 - 삭제
+    //todo 댓글 add -  edit - delete      
 }
 

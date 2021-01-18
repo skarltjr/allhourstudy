@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 
 import static com.allhour.allhourstudy.modules.account.QAccount.account;
 import static com.allhour.allhourstudy.modules.board.QBoard.board;
+import static com.allhour.allhourstudy.modules.board.QComment.comment;
 
 public class BoardRepositoryExtensionImpl extends QuerydslRepositorySupport implements BoardRepositoryExtension {
     public BoardRepositoryExtensionImpl() {
@@ -20,6 +21,7 @@ public class BoardRepositoryExtensionImpl extends QuerydslRepositorySupport impl
     public Page<Board> findLists(Pageable pageable) {
         JPQLQuery<Board> query = from(board)
                 .leftJoin(board.writer, account).fetchJoin()
+                .leftJoin(board.comments, comment).fetchJoin()
                 .distinct();
         JPQLQuery<Board> paging = getQuerydsl().applyPagination(pageable, query);
         QueryResults<Board> result = paging.fetchResults();

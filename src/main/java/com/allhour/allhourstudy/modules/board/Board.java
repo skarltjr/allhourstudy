@@ -5,6 +5,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @NamedEntityGraph(name = "Board.withAll",attributeNodes = {
@@ -16,7 +18,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "board_id")
 public class Board {
 
     @Id @Column(name = "board_id")
@@ -38,5 +40,7 @@ public class Board {
     @ManyToOne(fetch = FetchType.LAZY)
     private Account writer;
 
+    @OneToMany(mappedBy = "board")
+    private List<Comment> comments = new ArrayList<>();
     //순환참조 예상
 }
