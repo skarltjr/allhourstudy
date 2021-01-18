@@ -10,7 +10,8 @@ import java.util.List;
 
 
 @NamedEntityGraph(name = "Board.withAll",attributeNodes = {
-        @NamedAttributeNode("writer")
+        @NamedAttributeNode("writer"),
+        @NamedAttributeNode("comments")
 })
 @Entity
 @Builder
@@ -42,5 +43,9 @@ public class Board {
 
     @OneToMany(mappedBy = "board")
     private List<Comment> comments = new ArrayList<>();
+
+    public void addView() {
+        this.viewCount++;
+    }
     //순환참조 예상
 }

@@ -8,6 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 public interface BoardRepository extends JpaRepository<Board, Long>, BoardRepositoryExtension {
 
     @EntityGraph(value = "Board.withAll", type = EntityGraph.EntityGraphType.FETCH)
-    Board findWithWriterById(Long boardId);
+    Board findWithAllById(Long boardId);
 
 }

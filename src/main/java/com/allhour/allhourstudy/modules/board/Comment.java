@@ -2,14 +2,17 @@ package com.allhour.allhourstudy.modules.board;
 
 import com.allhour.allhourstudy.modules.account.Account;
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
-@Builder
-@Getter
-@Setter
+@NamedEntityGraph(name = "Comment.withAll",attributeNodes = {
+        @NamedAttributeNode("board"),
+        @NamedAttributeNode("commentWriter")
+})
+@Entity @Builder
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "comment_id")
@@ -20,6 +23,7 @@ public class Comment {
     @Column(name = "comment_id")
     private Long id;
 
+    @Length(max = 200)
     private String chat;
 
     private LocalDateTime createdDateTime;
