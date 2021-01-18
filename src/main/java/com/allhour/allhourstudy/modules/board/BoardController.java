@@ -67,7 +67,7 @@ public class BoardController {
     @GetMapping("/boards/{boardId}")
     public String viewBoard(@CurrentUser Account account,@PathVariable Long boardId, Model model) {
         // 작성자한테는 수정 삭제가 버튼이 가능하고 나머지한테는 안보이도록 프론트단에서
-        Board board = boardRepository.findById(boardId).orElseThrow();
+        Board board = boardRepository.findWithWriterById(boardId);
         model.addAttribute("account", account);
         model.addAttribute("board", board);
         return "redirect:/boards/" + board.getId();
