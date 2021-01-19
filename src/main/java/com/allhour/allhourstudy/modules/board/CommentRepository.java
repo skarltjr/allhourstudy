@@ -13,4 +13,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @EntityGraph(value = "Comment.withAll", type = EntityGraph.EntityGraphType.FETCH)
     List<Comment> findByBoard(Board board);
+
+    @EntityGraph(value = "Comment.withAll", type = EntityGraph.EntityGraphType.FETCH)
+    Comment findWithAllById(Long commentId);
 }

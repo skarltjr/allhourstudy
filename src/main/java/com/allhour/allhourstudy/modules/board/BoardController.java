@@ -3,6 +3,7 @@ package com.allhour.allhourstudy.modules.board;
 import com.allhour.allhourstudy.modules.account.Account;
 import com.allhour.allhourstudy.modules.account.CurrentUser;
 import com.allhour.allhourstudy.modules.board.form.BoardForm;
+import com.allhour.allhourstudy.modules.board.form.CommentForm;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -28,7 +29,7 @@ public class BoardController {
     private final CommentRepository commentRepository;
 
 
-    //todo  부트스트랩으로 인증정보가 있으면 글작성등 인증정보 or 본인체크
+    //todo  부트스트랩으로 인증정보가 있으면 글작성등 인증정보 or 본인체크  + 시큐리티
 
     /**
      * 전체 글 조회
@@ -41,14 +42,14 @@ public class BoardController {
         Page<Board> boardPage = boardRepository.findLists(pageable);
         //가져올 때 댓글 개수까지 달 수 있도록 양방향으로 댓글 - 게시글
         model.addAttribute("boardLists", boardPage);
-        return "boards";
+        return "board/boards";
     }
 
     /**
      * 글 작성
      */
 
-    @GetMapping("/board/add")
+    @GetMapping("/boards/add")
     public String writeBoardForm(@CurrentUser Account account, Model model) {
         model.addAttribute("account", account);
         model.addAttribute("boardForm", new BoardForm());
@@ -74,11 +75,12 @@ public class BoardController {
         // 작성자한테는 수정 삭제가 버튼이 가능하고 나머지한테는 안보이도록 프론트단에서
         Board board = boardRepository.findWithAllById(boardId);
         boardService.addViewCount(board);
+        List<Comment> comments = commentRepository.findByBoard(board);
         model.addAttribute("account", account);
         model.addAttribute("board", board);
-        List<Comment> comments = commentRepository.findByBoard(board);
         model.addAttribute("comments", comments);
-        return "redirect:/boards/" + board.getId();
+        model.addAttribute("commentForm", new CommentForm());
+        return "boards/view";
     }
 
     @GetMapping("/boards/{boardId}/edit")
@@ -110,21 +112,29 @@ public class BoardController {
         return "redirect:/boards";
     }
 
-    //todo 댓글 add -  edit - delete
-
-
-    /**         댓글도  form으로 받아야하나 ..... */
 
     @PostMapping("/boards/{boardId}/comments/add")
-    public String comment(@CurrentUser Account account, @PathVariable Long boardId, @RequestParam("comment") String comment) {
+    public String comment(@CurrentUser Account account, @PathVariable Long boardId, @ModelAttribute @Valid CommentForm commentForm) {
         Board board = boardRepository.findWithAllById(boardId);
-        commentService.addComment(account, board, comment);
+        commentService.addComment(account, board, commentForm);
         return "redirect:/boards/" + board.getId();
     }
 
-    /*@PostMapping("/boards/{boardId}/comments/edit")
-    public String editComments(@CurrentUser Account account, @PathVariable Long boardId, @RequestParam("comment") String comment) {
+    //todo 댓글 add -  edit을 어떻게 설정해야하는가?
+    /*@GetMapping("/boards/{boardId}/comments/{commentId}/edit")
+    public String editComments(@CurrentUser Account account, @PathVariable Long boardId, @PathVariable Long commentId,
+                               @RequestParam("comment") String comment) {
 
     }*/
+
+    @PostMapping("/boards/{boardId}/comments/{commentId}/delete")
+    public String deleteComments(@CurrentUser Account account, @PathVariable Long boardId, @PathVariable Long commentId) {
+        Comment comment = commentRepository.findWithAllById(commentId);
+        Board board = boardRepository.findWithAllById(boardId);
+        commentService.deleteComment(comment,board);
+        return "redirect:/boards/" + board.getId();
+    }
+
+
 }
 
