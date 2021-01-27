@@ -120,10 +120,10 @@ public class BoardController {
         return "redirect:/boards/" + board.getId();
     }
 
-    //todo 댓글 add -  edit을 어떻게 설정해야하는가?
-    /*@GetMapping("/boards/{boardId}/comments/{commentId}/edit")
+    //todo 댓글 edit을 어떻게 설정해야하는가?
+   /* @GetMapping("/boards/{boardId}/comments/{commentId}/edit")
     public String editComments(@CurrentUser Account account, @PathVariable Long boardId, @PathVariable Long commentId,
-                               @RequestParam("comment") String comment) {
+                               @ModelAttribute @Valid CommentForm commentForm) {
 
     }*/
 

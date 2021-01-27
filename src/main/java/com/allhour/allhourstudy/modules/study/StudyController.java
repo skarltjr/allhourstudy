@@ -64,7 +64,7 @@ public class StudyController {
         return "study/members";
     }
 
-    @GetMapping("/study/{path}/join")
+    @GetMapping("/study/{path}/join")  //todo Http get에 로직을 설정하지말자 -> post로 변경하기
     public String joinStudy(@CurrentUser Account account, @PathVariable String path) {
         Study study = studyRepository.findWithAllMemberByPath(path);
         studyService.memberJoin(study, account);
