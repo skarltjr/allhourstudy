@@ -31,10 +31,10 @@ public class Event {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER) // 이벤트 - 스터디는 거의 항상 같이 다닌다.
+    @ManyToOne(fetch = FetchType.LAZY) // 이벤트 - 스터디는 거의 항상 같이 다닌다.
     private Study study;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Account createdBy;
 
     @Column(nullable = false)

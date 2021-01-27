@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "comment_id")
+@EqualsAndHashCode(of = "id")
 public class Comment {
 
     @Id

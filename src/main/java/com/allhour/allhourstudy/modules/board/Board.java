@@ -19,7 +19,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "board_id")
+@EqualsAndHashCode(of = "id")
 public class Board {
 
     @Id @Column(name = "board_id")

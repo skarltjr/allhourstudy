@@ -130,7 +130,7 @@ public class Study {
     }
 
     public boolean isRemovable() {
-        return !this.published;
+        return this.closed;
     }
 
     public void memberJoin(Account account) {
