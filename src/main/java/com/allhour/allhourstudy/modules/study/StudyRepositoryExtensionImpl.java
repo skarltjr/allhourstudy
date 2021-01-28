@@ -25,9 +25,9 @@ public class StudyRepositoryExtensionImpl extends QuerydslRepositorySupport impl
     public Page<Study> findByKeyword(String keyWord, Pageable pageable) {
         JPQLQuery<Study> query = from(study)
                 .where(study.published.isTrue()
-                        .and(study.title.containsIgnoreCase(keyWord))
+                        .and(study.title.containsIgnoreCase(keyWord)
                         .or(study.tags.any().title.containsIgnoreCase(keyWord))
-                        .or(study.zones.any().localNameOfCity.containsIgnoreCase(keyWord)))
+                        .or(study.zones.any().localNameOfCity.containsIgnoreCase(keyWord))))
                 .leftJoin(study.tags, tag).fetchJoin()
                 .leftJoin(study.zones, zone).fetchJoin()
                 .distinct();
