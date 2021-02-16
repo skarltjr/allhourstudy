@@ -30,7 +30,7 @@ import java.time.LocalDateTime;
 @Transactional
 @RequiredArgsConstructor
 public class EnrollmentEventListener {
-
+    /**  async와 eventPublisher를 통한 비동기에 집중*/
     private final EnrollmentRepository enrollmentRepository;
     private final AppProperties appProperties;
     private final NotificationRepository notificationRepository;
