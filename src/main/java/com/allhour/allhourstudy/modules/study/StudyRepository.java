@@ -12,6 +12,8 @@ import java.util.List;
 @Transactional(readOnly = true)
 public interface StudyRepository extends JpaRepository<Study,Long>,StudyRepositoryExtension {
     boolean existsByPath(String path);
+    /**  load - 엔티티그래프 요소들은 즉시로딩 / 나머지는 lazy
+     *   fetch - 엔티티그래프 요소들은 즉시로딩 / 나머지는 디폴트 혹은 지정값 그대로*/
 
     @EntityGraph(value = "Study.withAll",type = EntityGraph.EntityGraphType.LOAD)
     Study findByPath(String path);

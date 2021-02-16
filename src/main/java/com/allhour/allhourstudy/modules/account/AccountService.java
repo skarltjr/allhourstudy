@@ -71,7 +71,7 @@ public class AccountService implements UserDetailsService {
                 .to(account.getEmail())
                 .subject("All H OUR STUDY 회원 가입 인증")
                 .message(message)
-                 .build();
+                .build();
 
         emailService.sendEmail(build);
     }
