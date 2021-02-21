@@ -3,6 +3,7 @@ package com.allhour.allhourstudy.modules.account;
 import com.allhour.allhourstudy.modules.account.form.SignUpForm;
 import com.allhour.allhourstudy.modules.account.validator.SignUpFormValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -12,7 +13,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 
-
+@Profile("dev")
 @Controller
 @RequiredArgsConstructor
 public class AccountController {
