@@ -39,7 +39,7 @@ public class ZoneService {
             zoneRepository.saveAll(zoneList);*/
 
             /**     inputstream을 통해 jar배포 시 file not found exception방지*/
-            InputStream resourceAsStream = getClass().getResourceAsStream("zones_kr.csv");
+            InputStream resourceAsStream = getClass().getResourceAsStream("/zones_kr.csv");
             BufferedReader reader = new BufferedReader(new InputStreamReader(resourceAsStream));
             List<Zone> zoneList = reader.lines().map(line -> {
                 String[] split = line.split(",");
